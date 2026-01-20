@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yuan Express Mobile</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-screen">
+        <header class="top-nav">
+            <div class="brand">
+                <div class="logo-box">¥</div>
+                <div class="brand-text">
+                    <h2>Som-Yuan</h2>
+                    <span>● Түз байланышта</span>
+                </div>
+            </div>
+            <button onclick="openAdmin()" class="admin-entry">🔧</button>
+        </header>
+
+        <div class="promo-card">
+            <i class="fas fa-bolt"></i>
+            <p id="promo-text">Бүгүн курс абдан жакшы! Тез алмаштырып калыңыз.</p>
+        </div>
+
+        <main class="calc-box">
+            <div class="input-group">
+                <label>Сиз бересиз (СОМ)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="som-input" placeholder="0" inputmode="decimal" oninput="calculate('som')">
+                    <span class="unit">KGS</span>
+                </div>
+            </div>
+
+            <div class="swap-divider">
+                <div class="circle-icon"><i class="fas fa-exchange-alt fa-rotate-90"></i></div>
+            </div>
+
+            <div class="input-group">
+                <label>Сиз аласыз (ЮАНЬ)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="yuan-input" placeholder="0" inputmode="decimal" oninput="calculate('yuan')">
+                    <span class="unit">CNY</span>
+                </div>
+            </div>
+
+            <div class="rate-info">
+                <span>Учурдагы курс: 1¥ = <strong id="current-rate">13.15</strong> сом</span>
+            </div>
+
+            <button onclick="sendOrder()" class="order-btn">
+                <i class="fab fa-whatsapp"></i> WhatsApp-ка заказ берүү
+            </button>
+        </main>
+
+        <div id="admin-modal" class="bottom-sheet">
+            <div class="sheet-content">
+                <h3>Курстарды башкаруу</h3>
+                <input type="number" id="rate1" step="0.01" placeholder="До 100ю">
+                <input type="number" id="rate2" step="0.01" placeholder="100-3000ю">
+                <input type="number" id="rate3" step="0.01" placeholder="3000ю+">
+                <textarea id="admin-promo" placeholder="Реклама тексти"></textarea>
+                <div class="sheet-btns">
+                    <button onclick="saveSettings()" class="save-btn">Сактоо</button>
+                    <button onclick="closeAdmin()" class="close-btn">Жабуу</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
