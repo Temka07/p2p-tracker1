@@ -3,72 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Yuan Express Mobile</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+    <title>Бүгүнкү юаньдын курсун билиңиз</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="app-screen">
-        <header class="top-nav">
-            <div class="brand">
-                <div class="logo-box">¥</div>
-                <div class="brand-text">
-                    <h2>Som-Yuan</h2>
-                    <span>● Түз байланышта</span>
-                </div>
+    <div class="app-container">
+        <header class="header-box">
+            <div class="welcome-text">
+                <h2>Саламатсызбы!</h2>
+                <p><span class="dot"></span>  Түз байланышта 🤝 </p>
             </div>
-            <button onclick="openAdmin()" class="admin-entry">🔧</button>
+            <div class="admin-icon" onclick="openAdmin()">⚙️</div>
         </header>
 
-        <div class="promo-card">
-            <i class="fas fa-bolt"></i>
-            <p id="promo-text">Бүгүн курс абдан жакшы! Тез алмаштырып калыңыз.</p>
+        <h1 class="main-title"> Юаньдын курсу суммага жараша болот. Сумманы жазыңыз 👇🏻 </h1>
+
+        <div class="promo-box">
+            <div class="promo-tag">ЖАРНАМА </div>
+            <p id="promo-display">Бул жерге сиздин текстиңиз жазылат</p>
         </div>
 
-        <main class="calc-box">
-            <div class="input-group">
-                <label>Сиз бересиз (СОМ)</label>
-                <div class="input-wrapper">
-                    <input type="number" id="som-input" placeholder="0" inputmode="decimal" oninput="calculate('som')">
-                    <span class="unit">KGS</span>
+        <div class="calc-card">
+            <div class="input-block">
+                <div class="label-row">
+                    <span>Сом жибересиз</span>
+                    <span class="code">KGS</span>
+                </div>
+                <div class="field">
+                    <input type="number" id="som-input" placeholder="0" oninput="calculate('som')">
+                    <img src="https://img.icons8.com/color/48/kyrgyzstan.png">
+                </div>
+                <div class="quick-btns">
+                    <button onclick="setQuick('som', 500)">500 с</button>
+                    <button onclick="setQuick('som', 1000)">1000 с</button>
+                    <button onclick="setQuick('som', 5000)">5000 с</button>
+                    <button onclick="resetField('som')" class="dashed">Башка сумма</button>
                 </div>
             </div>
 
-            <div class="swap-divider">
-                <div class="circle-icon"><i class="fas fa-exchange-alt fa-rotate-90"></i></div>
-            </div>
+            <div class="divider"><i class="fas fa-retweet"></i></div>
 
-            <div class="input-group">
-                <label>Сиз аласыз (ЮАНЬ)</label>
-                <div class="input-wrapper">
-                    <input type="number" id="yuan-input" placeholder="0" inputmode="decimal" oninput="calculate('yuan')">
-                    <span class="unit">CNY</span>
+            <div class="input-block">
+                <div class="label-row">
+                    <span>Юань аласыз</span>
+                    <span class="code">CNY</span>
+                </div>
+                <div class="field">
+                    <input type="number" id="yuan-input" placeholder="0" oninput="calculate('yuan')">
+                    <img src="https://img.icons8.com/color/48/china.png">
+                </div>
+                <div class="quick-btns">
+                    <button onclick="setQuick('yuan', 50)">50 ¥</button>
+                    <button onclick="setQuick('yuan', 100)">100 ¥</button>
+                    <button onclick="setQuick('yuan', 500)">500 ¥</button>
+                    <button onclick="resetField('yuan')" class="dashed">Башка сумма</button>
                 </div>
             </div>
+            
+            <div id="rate-badge" class="rate-status">Курс: <span id="current-rate">0</span></div>
+        </div>
 
-            <div class="rate-info">
-                <span>Учурдагы курс: 1¥ = <strong id="current-rate">13.15</strong> сом</span>
-            </div>
+        <div class="features-grid">
+            <div class="feature-item"><i class="fas fa-check-circle"></i><p>Ишенимдүү</p></div>
+            <div class="feature-item"><i class="fas fa-bolt"></i><p>Ыкчам тез</p></div>
+            <div class="feature-item"><i class="fas fa-headset"></i><p>24/7 колдоо</p></div>
+        </div>
 
-            <button onclick="sendOrder()" class="order-btn">
-                <i class="fab fa-whatsapp"></i> WhatsApp-ка заказ берүү
-            </button>
-        </main>
+        <button onclick="sendOrder()" class="whatsapp-btn">
+            <i class="fab fa-whatsapp"></i> АЛМАШТЫРУУНУ БАШТОО
+        </button>
+    </div>
 
-        <div id="admin-modal" class="bottom-sheet">
-            <div class="sheet-content">
-                <h3>Курстарды башкаруу</h3>
-                <input type="number" id="rate1" step="0.01" placeholder="До 100ю">
-                <input type="number" id="rate2" step="0.01" placeholder="100-3000ю">
-                <input type="number" id="rate3" step="0.01" placeholder="3000ю+">
-                <textarea id="admin-promo" placeholder="Реклама тексти"></textarea>
-                <div class="sheet-btns">
-                    <button onclick="saveSettings()" class="save-btn">Сактоо</button>
-                    <button onclick="closeAdmin()" class="close-btn">Жабуу</button>
-                </div>
-            </div>
+    <div id="admin-modal" class="modal">
+        <div class="modal-content">
+            <h3>Жөндөөлөр</h3>
+            <input type="number" id="rate1" placeholder="Курс (<100¥)">
+            <input type="number" id="rate2" placeholder="Курс (100-3000¥)">
+            <input type="number" id="rate3" placeholder="Курс (>3000¥)">
+            <textarea id="admin-promo" placeholder="Жарнама тексти"></textarea>
+            <button onclick="saveSettings()" class="save-btn">Сактоо</button>
+            <button onclick="closeAdmin()">Жабуу</button>
         </div>
     </div>
 
