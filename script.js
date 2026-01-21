@@ -1,32 +1,38 @@
-// Сиздин Firebase конфигурацияңыз
+// 1. Firebase конфигурациясы - Сиздин базага туташуу үчүн паспорт сыяктуу
 const firebaseConfig = {
     apiKey: "AIzaSyDXyv9sIAo2jHKMEZ0r9cYaUn4Q8af2KVA",
     authDomain: "yuanexchange-2fe09.firebaseapp.com",
-    databaseURL: "https://yuanexchange-2fe09-default-rtdb.europe-west1.firebasedatabase.app",
+    // Эң маанилүү сап ушул - бул сиздин базанын дареги:
+    databaseURL: "https://yuanexchange-2fe09-default-rtdb.europe-west1.firebasedatabase.app", 
     projectId: "yuanexchange-2fe09",
-    storageBucket: "yuanexchange-2fe09.appspot.com",
+    storageBucket: "yuanexchange-2fe09.firebasestorage.app",
     messagingSenderId: "1088132102402",
-    appId: "1:1088132102402:web:2283f5f729627e65afaa1b"
+    appId: "1:1088132102402:web:2283f5f729627e65afaa1b",
+    measurementId: "G-J3RY70ZBRV"
 };
 
-// Firebaseти ишке киргизүү
+// 2. Firebaseти ишке киргизүү
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-let settings = { t1: 13.3, t2: 13.17, t3: 13.05, promo: "Жүктөлүүдө..." };
+// Баштапкы маалыматтар (Базадан келгенче убактылуу турат)
+let settings = { t1: 13.3, t2: 13.17, t3: 13.05, promo: "Курс жүктөлүүдө..." };
 
-// БАЗАДАН МААЛЫМАТТЫ ЧЫНЫГЫ УБАКИИТТА АЛУУ
+// 3. БАЗАДАН МААЛЫМАТТЫ ЧЫНЫГЫ УБАКИИТТА АЛУУ
+// Бул функция базада бир сан өзгөрсө, сайтыңызда дароо өзгөртүп турат
 database.ref('exchangeSettings').on('value', (snapshot) => {
     const data = snapshot.val();
     if (data) {
         settings = data;
         document.getElementById('promo-display').innerText = settings.promo;
         
-        // Маалымат жаңыланганда калькуляторду да жаңылап коёт
-        if(document.getElementById('som-input').value) calculate('som');
+        // Эгер сумма жазылып турса, кайра эсептеп коёт
+        const sVal = document.getElementById('som-input').value;
+        if(sVal) calculate('som');
     }
 });
 
+// 4. Эсептөө функциясы
 function calculate(type) {
     const sIn = document.getElementById('som-input'), yIn = document.getElementById('yuan-input');
     const badge = document.getElementById('rate-badge'), rateText = document.getElementById('current-rate');
@@ -36,7 +42,9 @@ function calculate(type) {
     badge.style.display = "block";
 
     let r = (type === 'som') ? getRate(s / settings.t2) : getRate(y);
-    if (type === 'som') yIn.value = (s / r).toFixed(2); else sIn.value = (y * r).toFixed(2);
+    if (type === 'som') yIn.value = (s / r).toFixed(2); 
+    else sIn.value = (y * r).toFixed(2);
+    
     rateText.innerText = r;
 }
 
@@ -46,6 +54,7 @@ function getRate(v) {
     return settings.t3;
 }
 
+// 5. АДМИН ПАНЕЛДЕН БАЗАГА САКТОО
 function saveSettings() {
     const newData = {
         t1: parseFloat(document.getElementById('rate1').value) || settings.t1,
@@ -54,21 +63,24 @@ function saveSettings() {
         promo: document.getElementById('admin-promo').value || settings.promo
     };
 
+    // Бул маалыматты сиздин Бельгиядагы базаңызга жиберет
     database.ref('exchangeSettings').set(newData).then(() => {
-        alert("Жөндөөлөр баарына сакталды!");
+        alert("Ийгиликтүү! Эми бардык кардарларда жаңы курс көрүнөт.");
         closeAdmin();
-    }).catch(e => alert("Ката: " + e.message));
+    }).catch(e => alert("Ката чыкты: " + e.message));
 }
 
+// 6. Башка көмөкчү функциялар
 function setQuick(type, val) { document.getElementById(type + '-input').value = val; calculate(type); }
 function resetField(type) { 
     const input = document.getElementById(type + '-input');
     input.value = ""; input.focus();
     calculate(type); 
 }
-function openAdmin() { 
-    if (prompt("Код:") === "777") {
-        document.getElementById('admin-modal').style.display = "flex"; 
+function openAdmin() {
+    let pass = prompt("Админ кодду жазыңыз:");
+    if (pass === "777") {
+        document.getElementById('admin-modal').style.display = "flex";
         document.getElementById('rate1').value = settings.t1;
         document.getElementById('rate2').value = settings.t2;
         document.getElementById('rate3').value = settings.t3;
@@ -81,6 +93,6 @@ function sendOrder() {
     const s = document.getElementById('som-input').value;
     const y = document.getElementById('yuan-input').value;
     if(!s) return alert("Сумманы жазыңыз!");
-    let msg = `Саламатсызбы! Алмаштыруу боюнча:\n🇰🇬 Сом: ${s}\n🇨🇳 Юань: ${y}\n📊 Курс: ${getRate(y)}`;
+    let msg = `Саламатсызбы! Алмаштыруу боюнча:\n🇰🇬 Жиберем: ${s} сом\n🇨🇳 Алам: ${y} юань\n📊 Курс: ${getRate(y)}`;
     window.open(`https://wa.me/996998792579?text=${encodeURIComponent(msg)}`);
 }
