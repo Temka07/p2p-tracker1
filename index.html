@@ -7,6 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -14,16 +17,16 @@
         <header class="header-box">
             <div class="welcome-text">
                 <h2>Саламатсызбы!</h2>
-                <p><span class="dot"></span>  Түз байланышта 🤝 </p>
+                <p><span class="dot"></span> Түз байланышта 🤝 </p>
             </div>
             <div class="admin-icon" onclick="openAdmin()">⚙️</div>
         </header>
 
-        <h1 class="main-title"> Юаньдын курсу суммага жараша болот. Сумманы жазыңыз 👇🏻 </h1>
+        <h1 class="main-title">Юаньдын курсу суммага жараша болот. Сумманы жазыңыз 👇🏻</h1>
 
         <div class="promo-box">
-            <div class="promo-tag">ЖАРНАМА </div>
-            <p id="promo-display">Бул жерге сиздин текстиңиз жазылат</p>
+            <div class="promo-tag">ЖАРНАМА</div>
+            <p id="promo-display">Жүктөлүүдө...</p>
         </div>
 
         <div class="calc-card">
@@ -85,7 +88,7 @@
             <input type="number" id="rate3" placeholder="Курс (>3000¥)">
             <textarea id="admin-promo" placeholder="Жарнама тексти"></textarea>
             <button onclick="saveSettings()" class="save-btn">Сактоо</button>
-            <button onclick="closeAdmin()">Жабуу</button>
+            <button onclick="closeAdmin()" class="close-btn">Жабуу</button>
         </div>
     </div>
 
