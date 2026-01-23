@@ -3,12 +3,11 @@ const firebaseConfig = { databaseURL: "https://yuanexchange-2fe09-default-rtdb.e
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Default values (Если интернет офлайн)
 let settings = { 
     ali: {t1:13.1, t2:13.0, t3:12.9}, 
     we: {t1:13.2, t2:13.1, t3:13.0}, 
     promo: "Курс жаңыртылууда...", 
-    bank: {number: "0000000000", owner: "Жүктөлүүдө..."} 
+    bank: {number: "0998792579", owner: "Алмаз Т."} 
 };
 
 let currentApp = 'Alipay', currentLang = 'ky', clickCount = 0;
@@ -18,13 +17,12 @@ const translations = {
     ru: { hello: "Здравствуйте!", send: "Вы отправляете", receive: "Вы получаете", other: "Другая", copy: "Копировать", main: "ОБМЕНЯТЬ И ОТПРАВИТЬ ЧЕК", s1: "Сумма", s2: "Перевод", s3: "Чек" }
 };
 
-// Real-time Update
 db.ref('exchangeSettings').on('value', (s) => {
     if(s.exists()) { 
         settings = s.val(); 
         updateUI();
     }
-}, (error) => console.log("Firebase Error:", error));
+});
 
 function updateUI() {
     document.getElementById('promo-display').innerText = settings.promo; 
@@ -57,20 +55,12 @@ function sendOrder() {
     const yuan = document.getElementById('yuan-input').value;
     if(!som || !yuan) { alert(currentLang === 'ky' ? "Сумманы толтуруңуз!" : "Введите сумму!"); return; }
     
-    // Save to Firebase
-    db.ref('orders').push({
-        amountSom: som,
-        amountYuan: yuan,
-        app: currentApp,
-        date: new Date().toLocaleString()
-    });
+    db.ref('orders').push({ amountSom: som, amountYuan: yuan, app: currentApp, date: new Date().toLocaleString() });
 
     const text = `Заказ: ${som} сом -> ${yuan} ¥ (${currentApp})`;
-    const phone = settings.bank.number.replace(/\s/g, '');
-    window.open(`https://wa.me/996${phone.substring(1)}?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/996998792579?text=${encodeURIComponent(text)}`, '_blank');
 }
 
-// Pages Logic
 function showPage(pId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pId).classList.add('active');
@@ -86,7 +76,7 @@ function loadReviews() {
         if(!s.exists()) { cont.innerHTML = "<p style='text-align:center;color:gray;'>Азырынча пикир жок</p>"; return; }
         s.forEach(c => {
             const r = c.val();
-            cont.innerHTML = `<div class="review-card"><strong>${r.name}:</strong><p>${r.text}</p></div>` + cont.innerHTML;
+            cont.innerHTML = `<div class="review-card" style="background:#f2f2f7; padding:15px; border-radius:15px; margin-bottom:10px;"><strong>${r.name}:</strong><p>${r.text}</p></div>` + cont.innerHTML;
         });
     });
 }
@@ -101,14 +91,8 @@ function submitReview() {
     });
 }
 
-// Helpers
 function switchLang(l) {
     currentLang = l; const t = translations[l];
-    Object.keys(t).forEach(key => {
-        const el = document.getElementById(key.startsWith('s') ? 'step-'+key[1] : 'txt-'+key || 'lbl-'+key || 'btn-'+key);
-        // Manual fix for IDs
-    });
-    // Simplified Lang Update
     document.getElementById('txt-hello').innerText = t.hello;
     document.getElementById('lbl-send').innerText = t.send;
     document.getElementById('lbl-receive').innerText = t.receive;
@@ -133,15 +117,14 @@ function toggleMenu(o = null) {
     if(o === false) m.classList.remove('active'); else m.classList.toggle('active');
 }
 function copyNum() {
-    const num = settings.bank.number.replace(/\s/g, '');
-    navigator.clipboard.writeText(num).then(() => {
+    navigator.clipboard.writeText("0998792579").then(() => {
         const t = document.getElementById('copy-toast');
         t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000);
     });
 }
 function adminTrigger() {
     clickCount++;
-    if(clickCount === 5) { // 5 жолу басканда
+    if(clickCount === 3) { 
         let p = prompt("Password:");
         if(p === "777") window.location.href="admin.html";
         clickCount = 0;
