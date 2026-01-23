@@ -4,94 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Бүгүнкү юаньдын курсун билиңиз</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="app-container">
-        <header class="header-box">
-            <div class="welcome-text">
-                <h2>Саламатсызбы!</h2>
-                <p><span class="dot"></span> Түз байланышта 🤝 </p>
-            </div>
-            <div class="admin-icon" onclick="openAdmin()">⚙️</div>
-        </header>
-
-        <h1 class="main-title">Юаньдын курсу суммага жараша болот. Сумманы жазыңыз 👇🏻</h1>
-
-        <div class="promo-box">
-            <div class="promo-tag">ЖАРНАМА</div>
-            <p id="promo-display">Жүктөлүүдө...</p>
-        </div>
-
-        <div class="calc-card">
-            <div class="input-block">
-                <div class="label-row">
-                    <span>Сом жибересиз</span>
-                    <span class="code">KGS</span>
-                </div>
-                <div class="field">
-                    <input type="number" id="som-input" placeholder="0" oninput="calculate('som')">
-                    <img src="https://img.icons8.com/color/48/kyrgyzstan.png">
-                </div>
-                <div class="quick-btns">
-                    <button onclick="setQuick('som', 500)">500 с</button>
-                    <button onclick="setQuick('som', 1000)">1000 с</button>
-                    <button onclick="setQuick('som', 5000)">5000 с</button>
-                    <button onclick="resetField('som')" class="dashed">Башка сумма</button>
-                </div>
-            </div>
-
-            <div class="divider"><i class="fas fa-retweet"></i></div>
-
-            <div class="input-block">
-                <div class="label-row">
-                    <span>Юань аласыз</span>
-                    <span class="code">CNY</span>
-                </div>
-                <div class="field">
-                    <input type="number" id="yuan-input" placeholder="0" oninput="calculate('yuan')">
-                    <img src="https://img.icons8.com/color/48/china.png">
-                </div>
-                <div class="quick-btns">
-                    <button onclick="setQuick('yuan', 50)">50 ¥</button>
-                    <button onclick="setQuick('yuan', 100)">100 ¥</button>
-                    <button onclick="setQuick('yuan', 500)">500 ¥</button>
-                    <button onclick="resetField('yuan')" class="dashed">Башка сумма</button>
-                </div>
-            </div>
-            
-            <div id="rate-badge" class="rate-status">Курс: <span id="current-rate">0</span></div>
-        </div>
-
-        <div class="features-grid">
-            <div class="feature-item"><i class="fas fa-check-circle"></i><p>Ишенимдүү</p></div>
-            <div class="feature-item"><i class="fas fa-bolt"></i><p>Ыкчам тез</p></div>
-            <div class="feature-item"><i class="fas fa-headset"></i><p>24/7 колдоо</p></div>
-        </div>
-
-        <button onclick="sendOrder()" class="whatsapp-btn">
-            <i class="fab fa-whatsapp"></i> АЛМАШТЫРУУНУ БАШТОО
-        </button>
-    </div>
-
-    <div id="admin-modal" class="modal">
-        <div class="modal-content">
-            <h3>Жөндөөлөр</h3>
-            <input type="number" id="rate1" placeholder="Курс (<100¥)">
-            <input type="number" id="rate2" placeholder="Курс (100-3000¥)">
-            <input type="number" id="rate3" placeholder="Курс (>3000¥)">
-            <textarea id="admin-promo" placeholder="Жарнама тексти"></textarea>
-            <button onclick="saveSettings()" class="save-btn">Сактоо</button>
-            <button onclick="closeAdmin()" class="close-btn">Жабуу</button>
+<div class="app-container">
+    <div class="header-top">
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <div class="lang-switcher">
+            <button id="btn-ky" class="active" onclick="switchLang('ky')">KG</button>
+            <button id="btn-ru" onclick="switchLang('ru')">RU</button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <div id="page-home" class="page active">
+        <h1 id="txt-hello" onclick="adminTrigger()">Саламатсызбы!</h1>
+        <div class="promo-section" id="promo-display">Жүктөлүүдө...</div>
+
+        <div class="steps-container" onclick="showPage('page-guide')" style="cursor:pointer;">
+            <div class="step-item"><span class="step-num">1</span> <span id="step-1">Сумма жаз</span></div>
+            <div class="step-item"><span class="step-num">2</span> <span id="step-2">Котор</span></div>
+            <div class="step-item"><span class="step-num">3</span> <span id="step-3">Чек жибер</span></div>
+        </div>
+
+        <div class="glass-card">
+            <label id="lbl-send">Сом жибересиз</label>
+            <div class="input-box">
+                <input type="number" id="som-input" placeholder="0" oninput="calculate('som')" inputmode="decimal">
+                <span class="currency">KG</span>
+            </div>
+            <div class="quick-btns">
+                <button onclick="setVal('som', 500)">500с</button>
+                <button onclick="setVal('som', 1000)">1000с</button>
+                <button onclick="setVal('som', 5000)">5000с</button>
+                <button onclick="focusInput('som-input')" id="btn-other-s" class="other-btn">Башка сумма</button>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <label id="lbl-receive">Юань аласыз</label>
+            <div class="input-box">
+                <input type="number" id="yuan-input" placeholder="0" oninput="calculate('yuan')" inputmode="decimal">
+                <span class="currency">CNY</span>
+            </div>
+            <div class="quick-btns">
+                <button onclick="setVal('yuan', 50)">50¥</button>
+                <button onclick="setVal('yuan', 100)">100¥</button>
+                <button onclick="setVal('yuan', 500)">500¥</button>
+                <button onclick="focusInput('yuan-input')" id="btn-other-y" class="other-btn">Башка сумма</button>
+            </div>
+        </div>
+
+        <div class="app-selector">
+            <button id="ali-btn" class="active" onclick="setApp('Alipay')">Alipay</button>
+            <button id="we-btn" onclick="setApp('WeChat')">WeChat</button>
+        </div>
+
+        <div class="rate-info">Курс: <strong id="current-rate">0.00</strong></div>
+
+        <div class="bank-card-black" onclick="copyNum()">
+            <div class="bank-content">
+                <div class="bank-logo-yellow">M</div>
+                <div class="bank-text">
+                    <span class="bank-name">MBANK</span>
+                    <strong id="bank-number">0000 0000 0000</strong>
+                    <span class="bank-owner">...</span>
+                </div>
+                <button class="mini-copy-btn" id="btn-copy">Көчүрүү</button>
+            </div>
+            <div id="copy-toast">Көчүрүлдү!</div>
+        </div>
+
+        <button class="main-submit-btn" onclick="sendOrder()" id="btn-main">АЛМАШТЫРУУ ЖАНА ЧЕК ЖИБЕРҮҮ</button>
+    </div>
+
+    <div id="page-guide" class="page">
+        <h2>Кантип сатып алуу керек?</h2>
+        <div class="guide-content">
+            <div class="guide-step"><div class="num-b">1</div><p>Керектүү сумманы жазыңыз. Курс автоматтык түрдө эсептелет.</p></div>
+            <div class="guide-step"><div class="num-b">2</div><p>Көрсөтүлгөн MBANK номерине сомду которуңуз.</p></div>
+            <div class="guide-step"><div class="num-b">3</div><p>"Алмаштыруу" кнопкасын басып, бизге чекти WhatsApp аркылуу жибериңиз.</p></div>
+            <div class="guide-step"><div class="num-b">4</div><p>Биз текшерип, 1-5 мүнөт ичинде юань жиберебиз.</p></div>
+        </div>
+        <button class="back-btn" onclick="showPage('page-home')">Арткыга</button>
+    </div>
+
+    <div id="page-reviews" class="page">
+        <h2>Кардарлардын ойлору</h2>
+        <div id="reviews-container"></div>
+        <div class="add-review">
+            <input type="text" id="rev-name" placeholder="Атыңыз">
+            <textarea id="rev-text" placeholder="Пикириңиз..."></textarea>
+            <button onclick="submitReview()">Пикир калтыруу</button>
+        </div>
+        <button class="back-btn" onclick="showPage('page-home')">Арткыга</button>
+    </div>
+</div>
+
+<div id="side-menu" class="side-menu">
+    <div class="menu-close" onclick="toggleMenu()">✕</div>
+    <a href="#" onclick="showPage('page-home')" class="menu-link">🏠 Башкы бет</a>
+    <a href="#" onclick="showPage('page-guide')" class="menu-link">❓ Нускама</a>
+    <a href="#" onclick="showPage('page-reviews')" class="menu-link">⭐ Отзывтар</a>
+    <a href="https://wa.me/996998792579" target="_blank" class="menu-link">📞 Колдоо кызматы</a>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

@@ -1,98 +1,150 @@
-// 1. Firebase конфигурациясы - Сиздин базага туташуу үчүн паспорт сыяктуу
-const firebaseConfig = {
-    apiKey: "AIzaSyDXyv9sIAo2jHKMEZ0r9cYaUn4Q8af2KVA",
-    authDomain: "yuanexchange-2fe09.firebaseapp.com",
-    // Эң маанилүү сап ушул - бул сиздин базанын дареги:
-    databaseURL: "https://yuanexchange-2fe09-default-rtdb.europe-west1.firebasedatabase.app", 
-    projectId: "yuanexchange-2fe09",
-    storageBucket: "yuanexchange-2fe09.firebasestorage.app",
-    messagingSenderId: "1088132102402",
-    appId: "1:1088132102402:web:2283f5f729627e65afaa1b",
-    measurementId: "G-J3RY70ZBRV"
+// Firebase Configuration
+const firebaseConfig = { databaseURL: "https://yuanexchange-2fe09-default-rtdb.europe-west1.firebasedatabase.app/" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Default values (Если интернет офлайн)
+let settings = { 
+    ali: {t1:13.1, t2:13.0, t3:12.9}, 
+    we: {t1:13.2, t2:13.1, t3:13.0}, 
+    promo: "Курс жаңыртылууда...", 
+    bank: {number: "0000000000", owner: "Жүктөлүүдө..."} 
 };
 
-// 2. Firebaseти ишке киргизүү
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+let currentApp = 'Alipay', currentLang = 'ky', clickCount = 0;
 
-// Баштапкы маалыматтар (Базадан келгенче убактылуу турат)
-let settings = { t1: 13.3, t2: 13.17, t3: 13.05, promo: "Курс жүктөлүүдө..." };
+const translations = {
+    ky: { hello: "Саламатсызбы!", send: "Сом жибересиз", receive: "Юань аласыз", other: "Башка", copy: "Көчүрүү", main: "АЛМАШТЫРУУ ЖАНА ЧЕК ЖИБЕРҮҮ", s1: "Сумма жаз", s2: "Котор", s3: "Чек жибер" },
+    ru: { hello: "Здравствуйте!", send: "Вы отправляете", receive: "Вы получаете", other: "Другая", copy: "Копировать", main: "ОБМЕНЯТЬ И ОТПРАВИТЬ ЧЕК", s1: "Сумма", s2: "Перевод", s3: "Чек" }
+};
 
-// 3. БАЗАДАН МААЛЫМАТТЫ ЧЫНЫГЫ УБАКИИТТА АЛУУ
-// Бул функция базада бир сан өзгөрсө, сайтыңызда дароо өзгөртүп турат
-database.ref('exchangeSettings').on('value', (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-        settings = data;
-        document.getElementById('promo-display').innerText = settings.promo;
-        
-        // Эгер сумма жазылып турса, кайра эсептеп коёт
-        const sVal = document.getElementById('som-input').value;
-        if(sVal) calculate('som');
+// Real-time Update
+db.ref('exchangeSettings').on('value', (s) => {
+    if(s.exists()) { 
+        settings = s.val(); 
+        updateUI();
     }
-});
+}, (error) => console.log("Firebase Error:", error));
 
-// 4. Эсептөө функциясы
+function updateUI() {
+    document.getElementById('promo-display').innerText = settings.promo; 
+    document.getElementById('bank-number').innerText = settings.bank.number;
+    document.querySelector('.bank-owner').innerText = settings.bank.owner;
+    calculate('som'); 
+}
+
 function calculate(type) {
     const sIn = document.getElementById('som-input'), yIn = document.getElementById('yuan-input');
-    const badge = document.getElementById('rate-badge'), rateText = document.getElementById('current-rate');
-    let s = parseFloat(sIn.value), y = parseFloat(yIn.value);
-
-    if (!s && !y) { badge.style.display = "none"; return; }
-    badge.style.display = "block";
-
-    let r = (type === 'som') ? getRate(s / settings.t2) : getRate(y);
-    if (type === 'som') yIn.value = (s / r).toFixed(2); 
-    else sIn.value = (y * r).toFixed(2);
+    const r = (currentApp === 'Alipay') ? settings.ali : settings.we;
     
-    rateText.innerText = r;
-}
-
-function getRate(v) {
-    if (v < 100) return settings.t1;
-    if (v >= 100 && v < 3000) return settings.t2;
-    return settings.t3;
-}
-
-// 5. АДМИН ПАНЕЛДЕН БАЗАГА САКТОО
-function saveSettings() {
-    const newData = {
-        t1: parseFloat(document.getElementById('rate1').value) || settings.t1,
-        t2: parseFloat(document.getElementById('rate2').value) || settings.t2,
-        t3: parseFloat(document.getElementById('rate3').value) || settings.t3,
-        promo: document.getElementById('admin-promo').value || settings.promo
-    };
-
-    // Бул маалыматты сиздин Бельгиядагы базаңызга жиберет
-    database.ref('exchangeSettings').set(newData).then(() => {
-        alert("Ийгиликтүү! Эми бардык кардарларда жаңы курс көрүнөт.");
-        closeAdmin();
-    }).catch(e => alert("Ката чыкты: " + e.message));
-}
-
-// 6. Башка көмөкчү функциялар
-function setQuick(type, val) { document.getElementById(type + '-input').value = val; calculate(type); }
-function resetField(type) { 
-    const input = document.getElementById(type + '-input');
-    input.value = ""; input.focus();
-    calculate(type); 
-}
-function openAdmin() {
-    let pass = prompt("Админ кодду жазыңыз:");
-    if (pass === "777") {
-        document.getElementById('admin-modal').style.display = "flex";
-        document.getElementById('rate1').value = settings.t1;
-        document.getElementById('rate2').value = settings.t2;
-        document.getElementById('rate3').value = settings.t3;
-        document.getElementById('admin-promo').value = settings.promo;
+    if(type === 'som') {
+        let v = parseFloat(sIn.value); 
+        if(!v) { yIn.value = ""; return; }
+        let rate = v < 2000 ? r.t1 : (v < 15000 ? r.t2 : r.t3);
+        yIn.value = (v / rate).toFixed(2);
+        document.getElementById('current-rate').innerText = rate;
+    } else {
+        let v = parseFloat(yIn.value); 
+        if(!v) { sIn.value = ""; return; }
+        let rate = v < 150 ? r.t1 : (v < 1100 ? r.t2 : r.t3);
+        sIn.value = Math.round(v * rate);
+        document.getElementById('current-rate').innerText = rate;
     }
 }
-function closeAdmin() { document.getElementById('admin-modal').style.display = "none"; }
 
 function sendOrder() {
-    const s = document.getElementById('som-input').value;
-    const y = document.getElementById('yuan-input').value;
-    if(!s) return alert("Сумманы жазыңыз!");
-    let msg = `Саламатсызбы! Алмаштыруу боюнча:\n🇰🇬 Жиберем: ${s} сом\n🇨🇳 Алам: ${y} юань\n📊 Курс: ${getRate(y)}`;
-    window.open(`https://wa.me/996998792579?text=${encodeURIComponent(msg)}`);
+    const som = document.getElementById('som-input').value;
+    const yuan = document.getElementById('yuan-input').value;
+    if(!som || !yuan) { alert(currentLang === 'ky' ? "Сумманы толтуруңуз!" : "Введите сумму!"); return; }
+    
+    // Save to Firebase
+    db.ref('orders').push({
+        amountSom: som,
+        amountYuan: yuan,
+        app: currentApp,
+        date: new Date().toLocaleString()
+    });
+
+    const text = `Заказ: ${som} сом -> ${yuan} ¥ (${currentApp})`;
+    const phone = settings.bank.number.replace(/\s/g, '');
+    window.open(`https://wa.me/996${phone.substring(1)}?text=${encodeURIComponent(text)}`, '_blank');
 }
+
+// Pages Logic
+function showPage(pId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pId).classList.add('active');
+    window.scrollTo(0,0);
+    if(pId === 'page-reviews') loadReviews();
+    toggleMenu(false);
+}
+
+function loadReviews() {
+    db.ref('reviews').limitToLast(20).on('value', (s) => {
+        const cont = document.getElementById('reviews-container');
+        cont.innerHTML = "";
+        if(!s.exists()) { cont.innerHTML = "<p style='text-align:center;color:gray;'>Азырынча пикир жок</p>"; return; }
+        s.forEach(c => {
+            const r = c.val();
+            cont.innerHTML = `<div class="review-card"><strong>${r.name}:</strong><p>${r.text}</p></div>` + cont.innerHTML;
+        });
+    });
+}
+
+function submitReview() {
+    const n = document.getElementById('rev-name').value, t = document.getElementById('rev-text').value;
+    if(!n || !t) return alert("Толтуруңуз!");
+    db.ref('reviews').push({ name: n, text: t, date: new Date().toISOString() }).then(() => {
+        document.getElementById('rev-name').value = ""; 
+        document.getElementById('rev-text').value = "";
+        alert("Рахмат!");
+    });
+}
+
+// Helpers
+function switchLang(l) {
+    currentLang = l; const t = translations[l];
+    Object.keys(t).forEach(key => {
+        const el = document.getElementById(key.startsWith('s') ? 'step-'+key[1] : 'txt-'+key || 'lbl-'+key || 'btn-'+key);
+        // Manual fix for IDs
+    });
+    // Simplified Lang Update
+    document.getElementById('txt-hello').innerText = t.hello;
+    document.getElementById('lbl-send').innerText = t.send;
+    document.getElementById('lbl-receive').innerText = t.receive;
+    document.getElementById('btn-main').innerText = t.main;
+    document.getElementById('step-1').innerText = t.s1;
+    document.getElementById('step-2').innerText = t.s2;
+    document.getElementById('step-3').innerText = t.s3;
+    document.getElementById('btn-ky').classList.toggle('active', l==='ky');
+    document.getElementById('btn-ru').classList.toggle('active', l==='ru');
+}
+
+function setVal(type, val) { document.getElementById(type + '-input').value = val; calculate(type); }
+function focusInput(id) { const el = document.getElementById(id); el.value = ""; el.focus(); }
+function setApp(app) {
+    currentApp = app;
+    document.getElementById('ali-btn').classList.toggle('active', app === 'Alipay');
+    document.getElementById('we-btn').classList.toggle('active', app === 'WeChat');
+    calculate('som');
+}
+function toggleMenu(o = null) {
+    const m = document.getElementById('side-menu');
+    if(o === false) m.classList.remove('active'); else m.classList.toggle('active');
+}
+function copyNum() {
+    const num = settings.bank.number.replace(/\s/g, '');
+    navigator.clipboard.writeText(num).then(() => {
+        const t = document.getElementById('copy-toast');
+        t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000);
+    });
+}
+function adminTrigger() {
+    clickCount++;
+    if(clickCount === 5) { // 5 жолу басканда
+        let p = prompt("Password:");
+        if(p === "777") window.location.href="admin.html";
+        clickCount = 0;
+    }
+}
+window.onload = () => { switchLang('ky'); updateUI(); };
