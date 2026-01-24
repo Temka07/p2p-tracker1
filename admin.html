@@ -10,61 +10,66 @@
     <style>
         :root { --primary: #5856D6; --success: #34C759; --danger: #FF3B30; --bg: #F2F2F7; --black: #1C1C1E; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 15px; color: var(--black); }
-        
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .admin-nav { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .nav-link { background: white; padding: 10px 18px; border-radius: 15px; font-size: 13px; font-weight: 700; text-decoration: none; color: black; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .nav-link:active { background: var(--primary); color: white; }
-
         .card { background: white; border-radius: 22px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.02); }
         h2 { font-size: 17px; margin: 0 0 15px 0; display: flex; align-items: center; gap: 8px; }
         h2 i { color: var(--primary); }
-
         .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
         input { width: 100%; padding: 14px; border: 1.5px solid #E5E5EA; border-radius: 14px; font-size: 16px; outline: none; transition: 0.2s; }
         input:focus { border-color: var(--primary); }
-        
         button { width: 100%; padding: 16px; border: none; border-radius: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 15px; }
         .btn-save { background: var(--primary); color: white; }
         .btn-bank { background: var(--black); color: white; margin-top: 10px; }
         button:active { transform: scale(0.98); }
-
         .list-container { max-height: 350px; overflow-y: auto; padding-right: 5px; }
         .item-card { background: #F8F8FA; padding: 15px; border-radius: 18px; margin-bottom: 10px; position: relative; border: 1px solid #EEE; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         .item-meta { font-size: 11px; color: #8E8E93; margin-bottom: 5px; display: flex; justify-content: space-between; }
         .item-title { font-weight: 800; font-size: 15px; color: var(--black); }
         .delete-icon { position: absolute; right: 15px; top: 15px; color: #D1D1D6; font-size: 18px; cursor: pointer; transition: 0.2s; }
         .delete-icon:hover { color: var(--danger); }
-        
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .stat-box { background: white; padding: 15px; border-radius: 18px; text-align: center; border: 1px solid rgba(0,0,0,0.02); }
         .stat-num { font-size: 20px; font-weight: 900; color: var(--primary); }
         .stat-label { font-size: 12px; color: var(--grey); font-weight: 600; }
+        .review-type { font-size: 12px; padding: 4px 8px; border-radius: 8px; margin-bottom: 5px; display: inline-block; }
+        .type-pos { background: #E8F5E9; color: #2E7D32; }
+        .type-neg { background: #FFEBEE; color: #C62828; }
+        .lang-btns { display: flex; gap: 5px; margin-bottom: 10px; }
+        .lang-btns button { padding: 5px 10px; font-size: 10px; width: auto; border-radius: 8px; background: #ddd; }
+        .lang-btns button.active { background: var(--primary); color: white; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 style="font-size: 22px; font-weight: 800;">Admin Panel</h1>
-        <button onclick="location.href='index.html'" style="width: auto; padding: 8px 15px; background: #E5E5EA; font-size: 12px; border-radius: 10px;">Сайтка</button>
+        <h1 id="adm-title" style="font-size: 22px; font-weight: 800;">Админ панель</h1>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <div class="lang-btns">
+                <button id="adm-ky" class="active" onclick="switchAdminLang('ky')">KY</button>
+                <button id="adm-ru" onclick="switchAdminLang('ru')">RU</button>
+            </div>
+            <button id="btn-to-site" onclick="location.href='index.html'" style="width: auto; padding: 8px 15px; background: #E5E5EA; font-size: 12px; border-radius: 10px;">Сайтка</button>
+        </div>
     </div>
 
     <div class="admin-nav">
-        <a href="#section-rates" class="nav-link">Курстар</a>
-        <a href="#section-bank" class="nav-link">Реквизиттер</a>
-        <a href="#section-orders" class="nav-link">Заказдар</a>
-        <a href="#section-reviews" class="nav-link">Отзывтар</a>
+        <a href="#section-rates" class="nav-link" id="nav-rates">Курстар</a>
+        <a href="#section-bank" class="nav-link" id="nav-bank">Реквизиттер</a>
+        <a href="#section-orders" class="nav-link" id="nav-orders">Заказдар</a>
+        <a href="#section-reviews" class="nav-link" id="nav-reviews">Отзывтар</a>
     </div>
 
     <div class="stat-grid">
-        <div class="stat-box"><div class="stat-num" id="stat-orders">0</div><div class="stat-label">Заказдар</div></div>
-        <div class="stat-box"><div class="stat-num" id="stat-reviews">0</div><div class="stat-label">Отзывтар</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-orders">0</div><div class="stat-label" id="lbl-stat-orders">Заказдар</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-reviews">0</div><div class="stat-label" id="lbl-stat-reviews">Отзывтар</div></div>
     </div>
 
     <div class="card" id="section-rates">
-        <h2><i class="fas fa-chart-line"></i> Юань курстары</h2>
+        <h2 id="h2-rates"><i class="fas fa-chart-line"></i> Юань курстары</h2>
         <label style="font-size: 12px; color: gray; margin-bottom: 5px; display: block;">Alipay (T1, T2, T3)</label>
         <div class="grid">
             <input type="number" id="ali-t1" step="0.01" placeholder="T1">
@@ -77,39 +82,86 @@
             <input type="number" id="we-t2" step="0.01" placeholder="T2">
             <input type="number" id="we-t3" step="0.01" placeholder="T3">
         </div>
-        <label style="font-size: 12px; color: gray; margin-bottom: 5px; display: block;">Жарнама тексти</label>
-        <input type="text" id="promo-text" placeholder="Мисалы: Бүгүнкү курс абдан жакшы!">
-        <button class="btn-save" onclick="updateRates()" style="margin-top: 15px;">КУРСТАРДЫ ЖАҢЫРТУУ</button>
+        
+        <label id="lbl-promo-rates" style="font-size: 12px; color: #5856D6; font-weight: bold; margin-bottom: 5px; display: block;">Жарнама блогундагы курс (юань менен):</label>
+        <div class="grid">
+            <input type="number" id="promo-rate-1" step="0.01" placeholder="100ю чейин">
+            <input type="number" id="promo-rate-2" step="0.01" placeholder="100-3000ю">
+            <input type="number" id="promo-rate-3" step="0.01" placeholder="3000ю жогору">
+        </div>
+
+        <label id="lbl-promo-text" style="font-size: 12px; color: gray; margin-bottom: 5px; display: block;">Жарнама тексти</label>
+        <input type="text" id="promo-text" placeholder="...">
+        <button id="btn-update-rates" class="btn-save" onclick="updateRates()" style="margin-top: 15px;">КУРСТАРДЫ ЖАҢЫРТУУ</button>
     </div>
 
     <div class="card" id="section-bank">
-        <h2><i class="fas fa-university"></i> Реквизиттер</h2>
-        <input type="text" id="bank-num" placeholder="MBANK Номер">
-        <input type="text" id="bank-owner" placeholder="Ээсинин аты (мис: Улан Т.)" style="margin-top:10px;">
-        <button class="btn-bank" onclick="updateBank()">САКТОО</button>
+        <h2 id="h2-bank"><i class="fas fa-university"></i> Реквизиттер</h2>
+        <input type="text" id="bank-name" placeholder="Банк">
+        <input type="text" id="bank-num" placeholder="Номер" style="margin-top:10px;">
+        <input type="text" id="bank-owner" placeholder="Ээси" style="margin-top:10px;">
+        <button id="btn-save-bank" class="btn-bank" onclick="updateBank()">САКТОО</button>
     </div>
 
     <div class="card" id="section-orders">
-        <h2><i class="fas fa-shopping-cart"></i> Акыркы заказдар</h2>
+        <h2 id="h2-orders"><i class="fas fa-shopping-cart"></i> Акыркы заказдар</h2>
         <div id="orders-list" class="list-container">
-            <p style="text-align:center; color:gray; padding: 20px;">Жүктөлүүдө...</p>
+            <p id="txt-loading-orders" style="text-align:center; color:gray; padding: 20px;">Жүктөлүүдө...</p>
         </div>
     </div>
 
     <div class="card" id="section-reviews">
-        <h2><i class="fas fa-comment-dots"></i> Кардарлардын пикирлери</h2>
+        <h2 id="h2-reviews"><i class="fas fa-comment-dots"></i> Кардарлардын пикирлери</h2>
         <div id="reviews-list" class="list-container">
-            <p style="text-align:center; color:gray; padding: 20px;">Пикирлер жок...</p>
+            <p id="txt-no-reviews" style="text-align:center; color:gray; padding: 20px;">Пикирлер жок...</p>
         </div>
     </div>
 
     <script>
-        // FIREBASE CONFIGURATION
         const firebaseConfig = { databaseURL: "https://yuanexchange-2fe09-default-rtdb.europe-west1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        let currentAdminLang = 'ky';
 
-        // 1. Курстарды жана реквизиттерди жүктөө
+        const adminTranslations = {
+            ky: {
+                title: "Башкаруу панели", toSite: "Сайтка", rates: "Курстар", bank: "Реквизиттер", orders: "Заказдар", 
+                reviews: "Пикирлер", promoLabel: "Жарнама блогундагы курс:", promoTextLabel: "Жарнама тексти",
+                updateBtn: "МААЛЫМАТТЫ ЖАҢЫРТУУ", saveBtn: "САКТОО", loading: "Жүктөлүүдө...", noData: "Маалымат жок",
+                confirm: "Чын эле өчүрөсүзбү?", success: "Ийгиликтүү аткарылды!", pos: "😻 Жагымдуу", neg: "😾 Нааразы"
+            },
+            ru: {
+                title: "Панель управления", toSite: "На сайт", rates: "Курсы", bank: "Реквизиты", orders: "Заказы", 
+                reviews: "Отзывы", promoLabel: "Курс в блоке рекламы:", promoTextLabel: "Текст рекламы",
+                updateBtn: "ОБНОВИТЬ КУРСЫ", saveBtn: "СОХРАНИТЬ", loading: "Загрузка...", noData: "Данных нет",
+                confirm: "Вы уверены, что хотите удалить?", success: "Успешно обновлено!", pos: "😻 Положительный", neg: "😾 Отрицательный"
+            }
+        };
+
+        function switchAdminLang(lang) {
+            currentAdminLang = lang;
+            const t = adminTranslations[lang];
+            document.getElementById('adm-title').innerText = t.title;
+            document.getElementById('btn-to-site').innerText = t.toSite;
+            document.getElementById('nav-rates').innerText = t.rates;
+            document.getElementById('nav-bank').innerText = t.bank;
+            document.getElementById('nav-orders').innerText = t.orders;
+            document.getElementById('nav-reviews').innerText = t.reviews;
+            document.getElementById('lbl-stat-orders').innerText = t.orders;
+            document.getElementById('lbl-stat-reviews').innerText = t.reviews;
+            document.getElementById('h2-rates').innerHTML = `<i class="fas fa-chart-line"></i> ${t.rates}`;
+            document.getElementById('h2-bank').innerHTML = `<i class="fas fa-university"></i> ${t.bank}`;
+            document.getElementById('h2-orders').innerHTML = `<i class="fas fa-shopping-cart"></i> ${t.orders}`;
+            document.getElementById('h2-reviews').innerHTML = `<i class="fas fa-comment-dots"></i> ${t.reviews}`;
+            document.getElementById('lbl-promo-rates').innerText = t.promoLabel;
+            document.getElementById('lbl-promo-text').innerText = t.promoTextLabel;
+            document.getElementById('btn-update-rates').innerText = t.updateBtn;
+            document.getElementById('btn-save-bank').innerText = t.saveBtn;
+            
+            document.getElementById('adm-ky').classList.toggle('active', lang === 'ky');
+            document.getElementById('adm-ru').classList.toggle('active', lang === 'ru');
+        }
+
         db.ref('exchangeSettings').on('value', (s) => {
             if(s.exists()){
                 const d = s.val();
@@ -120,7 +172,13 @@
                 document.getElementById('we-t2').value = d.we.t2;
                 document.getElementById('we-t3').value = d.we.t3;
                 document.getElementById('promo-text').value = d.promo;
+                if(d.promoRates) {
+                    document.getElementById('promo-rate-1').value = d.promoRates.r1 || "";
+                    document.getElementById('promo-rate-2').value = d.promoRates.r2 || "";
+                    document.getElementById('promo-rate-3').value = d.promoRates.r3 || "";
+                }
                 if(d.bank){
+                    document.getElementById('bank-name').value = d.bank.name || "MBANK";
                     document.getElementById('bank-num').value = d.bank.number;
                     document.getElementById('bank-owner').value = d.bank.owner;
                 }
@@ -129,29 +187,22 @@
 
         function updateRates() {
             const data = {
-                ali: { 
-                    t1: parseFloat(document.getElementById('ali-t1').value), 
-                    t2: parseFloat(document.getElementById('ali-t2').value), 
-                    t3: parseFloat(document.getElementById('ali-t3').value) 
-                },
-                we: { 
-                    t1: parseFloat(document.getElementById('we-t1').value), 
-                    t2: parseFloat(document.getElementById('we-t2').value), 
-                    t3: parseFloat(document.getElementById('we-t3').value) 
-                },
-                promo: document.getElementById('promo-text').value
+                ali: { t1: parseFloat(document.getElementById('ali-t1').value), t2: parseFloat(document.getElementById('ali-t2').value), t3: parseFloat(document.getElementById('ali-t3').value) },
+                we: { t1: parseFloat(document.getElementById('we-t1').value), t2: parseFloat(document.getElementById('we-t2').value), t3: parseFloat(document.getElementById('we-t3').value) },
+                promo: document.getElementById('promo-text').value,
+                promoRates: { r1: document.getElementById('promo-rate-1').value, r2: document.getElementById('promo-rate-2').value, r3: document.getElementById('promo-rate-3').value }
             };
-            db.ref('exchangeSettings').update(data).then(() => alert("Курстар ийгиликтүү жаңыртылды!"));
+            db.ref('exchangeSettings').update(data).then(() => alert(adminTranslations[currentAdminLang].success));
         }
 
         function updateBank() {
             db.ref('exchangeSettings/bank').set({
+                name: document.getElementById('bank-name').value,
                 number: document.getElementById('bank-num').value,
                 owner: document.getElementById('bank-owner').value
-            }).then(() => alert("Реквизиттер сакталды!"));
+            }).then(() => alert(adminTranslations[currentAdminLang].success));
         }
 
-        // 2. Заказдарды башкаруу
         db.ref('orders').on('value', (s) => {
             const list = document.getElementById('orders-list');
             list.innerHTML = "";
@@ -167,10 +218,9 @@
                     </div>` + list.innerHTML;
             });
             document.getElementById('stat-orders').innerText = count;
-            if(count === 0) list.innerHTML = "<p style='text-align:center; color:gray;'>Заказдар жок</p>";
+            if(count === 0) list.innerHTML = `<p style='text-align:center; color:gray;'>${adminTranslations[currentAdminLang].noData}</p>`;
         });
 
-        // 3. Отзывтарды башкаруу
         db.ref('reviews').on('value', (s) => {
             const list = document.getElementById('reviews-list');
             list.innerHTML = "";
@@ -178,20 +228,23 @@
             s.forEach(child => {
                 count++;
                 const r = child.val();
+                const typeClass = r.type === 'neg' ? 'type-neg' : 'type-pos';
+                const typeText = r.type === 'neg' ? adminTranslations[currentAdminLang].neg : adminTranslations[currentAdminLang].pos;
                 list.innerHTML = `
                     <div class="item-card">
                         <i class="fas fa-trash-alt delete-icon" onclick="deleteItem('reviews/${child.key}')"></i>
-                        <div class="item-meta"><span>${r.date || ''}</span></div>
+                        <div class="item-meta"><span>${r.date ? new Date(r.date).toLocaleDateString() : ''}</span></div>
+                        <div class="review-type ${typeClass}">${typeText}</div>
                         <div class="item-title">👤 ${r.name}</div>
                         <div style="font-size: 13px; color: #444; margin-top: 5px;">${r.text}</div>
                     </div>` + list.innerHTML;
             });
             document.getElementById('stat-reviews').innerText = count;
-            if(count === 0) list.innerHTML = "<p style='text-align:center; color:gray;'>Пикирлер жок</p>";
+            if(count === 0) list.innerHTML = `<p style='text-align:center; color:gray;'>${adminTranslations[currentAdminLang].noData}</p>`;
         });
 
         function deleteItem(path) {
-            if(confirm("Чын эле өчүрөсүзбү?")) {
+            if(confirm(adminTranslations[currentAdminLang].confirm)) {
                 db.ref(path).remove();
             }
         }

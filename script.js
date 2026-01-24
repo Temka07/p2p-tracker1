@@ -7,14 +7,89 @@ let settings = {
     ali: {t1:13.1, t2:13.0, t3:12.9}, 
     we: {t1:13.2, t2:13.1, t3:13.0}, 
     promo: "Курс жаңыртылууда...", 
-    bank: {number: "0998792579", owner: "Алмаз Т."} 
+    promoRates: {r1: "--", r2: "--", r3: "--"},
+    bank: {name: "MBANK", number: "0998792579", owner: "Алмаз Т."} 
 };
 
-let currentApp = 'Alipay', currentLang = 'ky', clickCount = 0;
+let currentApp = 'Alipay', currentLang = 'ky', clickCount = 0, selectedRevType = 'pos';
 
 const translations = {
-    ky: { hello: "Саламатсызбы!", send: "Сом жибересиз", receive: "Юань аласыз", other: "Башка", copy: "Көчүрүү", main: "АЛМАШТЫРУУ ЖАНА ЧЕК ЖИБЕРҮҮ", s1: "Сумма жаз", s2: "Котор", s3: "Чек жибер" },
-    ru: { hello: "Здравствуйте!", send: "Вы отправляете", receive: "Вы получаете", other: "Другая", copy: "Копировать", main: "ОБМЕНЯТЬ И ОТПРАВИТЬ ЧЕК", s1: "Сумма", s2: "Перевод", s3: "Чек" }
+    ky: {
+        hello: "Саламатсызбы!",
+        send: "Сиз которо турган сумма (сом)",
+        receive: "Сиз ала турган сумма (юань)",
+        other: "Башка сумма",
+        copy: "Көчүрүү",
+        copied: "Көчүрүлдү!",
+        main_btn: "АЛМАШТЫРУУ ЖАНА ЧЕКТИ ЖӨНӨТҮҮ",
+        s1: "Жазыңыз",
+        s2: "Которуңуз",
+        s3: "Чек жөнөтүңүз",
+        today_rate: "🇨🇳 Юаньдын бүгүнкү курсу:",
+        r1: "100ю чейин",
+        r2: "100ю — 3000ю чейин",
+        r3: "3000ю жогору",
+        cur_rate: "Учурдагы курс:",
+        guide_t: "Кантип сатып алуу керек?",
+        g1: "Керектүү сумманы жазыңыз. Курс автоматтык түрдө эсептелип чыгат.",
+        g2: "Эсептөөдөн кийин реквизиттерди көчүрүп, өзүңүздүн банктык тиркемеңиз аркылуу которуу жасаңыз.",
+        g3: "Которуу аяктагандан кийин «Чекти жөнөтүү» баскычын басыңыз. WhatsApp аркылуу төлөмдүн чегин жана QR-кодуңузду жөнөтүңүз. 10 мүнөт ичинде юань которулат.",
+        back: "АРТКА КАЙТУУ",
+        rev_t: "Кардарлардын ойлору",
+        add_rev: "Пикир калтыруу",
+        name_ph: "Атыңызды жазыңыз",
+        text_ph: "Оюңузду билдириңиз...",
+        submit: "ЖӨНӨТҮҮ",
+        pos: "😻 Жагымдуу",
+        neg: "😾 Нааразы",
+        m_home: "🏠 Башкы бет",
+        m_guide: "❓ Нускама",
+        m_rev: "⭐ Пикирлер",
+        m_lesson: "📱 Alipay ачуу сабагы",
+        m_support: "📞 Колдоо кызматы",
+        alert_fill: "Сураныч, сумманы толтуруңуз!",
+        alert_rev_ok: "Пикириңиз үчүн ыраазычылык билдиребиз!",
+        alert_rev_err: "Сураныч, бардык талааларды толтуруңуз!",
+        no_rev: "Азырынча пикирлер жок"
+    },
+    ru: {
+        hello: "Здравствуйте!",
+        send: "Вы отправляете (сом)",
+        receive: "Вы получаете (юань)",
+        other: "Другая сумма",
+        copy: "Копировать",
+        copied: "Скопировано!",
+        main_btn: "ОБМЕНЯТЬ И ОТПРАВИТЬ ЧЕК",
+        s1: "Введите",
+        s2: "Переведите",
+        s3: "Скиньте чек",
+        today_rate: "🇨🇳 Текущий курс юаня:",
+        r1: "До 100ю",
+        r2: "От 100ю до 3000ю",
+        r3: "От 3000ю",
+        cur_rate: "Курс:",
+        guide_t: "Как совершить покупку?",
+        g1: "Введите сумму. Калькулятор автоматически рассчитает её по курсу.",
+        g2: "После расчета скопируйте реквизиты и сделайте перевод через свой банк.",
+        g3: "После оплаты нажмите кнопку «Отправить чек». В WhatsApp скиньте скриншот чека и ваш QR-код. Юани придут в течение 10 минут.",
+        back: "НАЗАД",
+        rev_t: "Отзывы клиентов",
+        add_rev: "Оставить отзыв",
+        name_ph: "Ваше имя",
+        text_ph: "Ваш отзыв...",
+        submit: "ОТПРАВИТЬ",
+        pos: "😻 Положительный",
+        neg: "😾 Отрицательный",
+        m_home: "🏠 Главная",
+        m_guide: "❓ Инструкция",
+        m_rev: "⭐ Отзывы",
+        m_lesson: "📱 Урок по Alipay",
+        m_support: "📞 Служба поддержки",
+        alert_fill: "Пожалуйста, введите сумму!",
+        alert_rev_ok: "Спасибо за ваш отзыв!",
+        alert_rev_err: "Пожалуйста, заполните все поля!",
+        no_rev: "Отзывов пока нет"
+    }
 };
 
 db.ref('exchangeSettings').on('value', (s) => {
@@ -26,15 +101,22 @@ db.ref('exchangeSettings').on('value', (s) => {
 
 function updateUI() {
     document.getElementById('promo-display').innerText = settings.promo; 
-    document.getElementById('bank-number').innerText = settings.bank.number;
-    document.querySelector('.bank-owner').innerText = settings.bank.owner;
+    if(settings.promoRates) {
+        document.getElementById('p-rate-1').innerText = settings.promoRates.r1 + " сом";
+        document.getElementById('p-rate-2').innerText = settings.promoRates.r2 + " сом";
+        document.getElementById('p-rate-3').innerText = settings.promoRates.r3 + " сом";
+    }
+    if(settings.bank) {
+        document.getElementById('bank-title').innerText = settings.bank.name || "MBANK";
+        document.getElementById('bank-number').innerText = settings.bank.number;
+        document.querySelector('.bank-owner').innerText = settings.bank.owner;
+    }
     calculate('som'); 
 }
 
 function calculate(type) {
     const sIn = document.getElementById('som-input'), yIn = document.getElementById('yuan-input');
     const r = (currentApp === 'Alipay') ? settings.ali : settings.we;
-    
     if(type === 'som') {
         let v = parseFloat(sIn.value); 
         if(!v) { yIn.value = ""; return; }
@@ -53,11 +135,9 @@ function calculate(type) {
 function sendOrder() {
     const som = document.getElementById('som-input').value;
     const yuan = document.getElementById('yuan-input').value;
-    if(!som || !yuan) { alert(currentLang === 'ky' ? "Сумманы толтуруңуз!" : "Введите сумму!"); return; }
-    
+    if(!som || !yuan) { alert(translations[currentLang].alert_fill); return; }
     db.ref('orders').push({ amountSom: som, amountYuan: yuan, app: currentApp, date: new Date().toLocaleString() });
-
-    const text = `Заказ: ${som} сом -> ${yuan} ¥ (${currentApp})`;
+    const text = `Саламатсызбы! Юань алгым келет:\nСумма: ${som} сом -> ${yuan} ¥\nТиркеме: ${currentApp}`;
     window.open(`https://wa.me/996998792579?text=${encodeURIComponent(text)}`, '_blank');
 }
 
@@ -65,29 +145,42 @@ function showPage(pId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pId).classList.add('active');
     window.scrollTo(0,0);
-    if(pId === 'page-reviews') loadReviews();
+    if(pId === 'page-reviews') { loadReviews(); setRevType('pos'); }
     toggleMenu(false);
 }
 
 function loadReviews() {
-    db.ref('reviews').limitToLast(20).on('value', (s) => {
+    db.ref('reviews').on('value', (s) => {
         const cont = document.getElementById('reviews-container');
         cont.innerHTML = "";
-        if(!s.exists()) { cont.innerHTML = "<p style='text-align:center;color:gray;'>Азырынча пикир жок</p>"; return; }
+        if(!s.exists()) { cont.innerHTML = `<p style='text-align:center;color:gray;'>${translations[currentLang].no_rev}</p>`; return; }
         s.forEach(c => {
             const r = c.val();
-            cont.innerHTML = `<div class="review-card" style="background:#f2f2f7; padding:15px; border-radius:15px; margin-bottom:10px;"><strong>${r.name}:</strong><p>${r.text}</p></div>` + cont.innerHTML;
+            const emoji = r.type === 'neg' ? '😾' : '😻';
+            cont.innerHTML = `
+                <div class="review-card" style="background:#f2f2f7; padding:15px; border-radius:15px; margin-bottom:10px; border-left: 4px solid ${r.type === 'neg' ? '#FF3B30' : '#34C759'};">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <strong>${emoji} ${r.name}</strong>
+                        <span style="font-size:10px; color:gray;">${r.date ? new Date(r.date).toLocaleDateString() : ''}</span>
+                    </div>
+                    <p style="font-size:14px; margin:0;">${r.text}</p>
+                </div>` + cont.innerHTML;
         });
     });
 }
 
+function setRevType(type) {
+    selectedRevType = type;
+    document.getElementById('type-pos').style.borderColor = type === 'pos' ? 'var(--success)' : 'transparent';
+    document.getElementById('type-neg').style.borderColor = type === 'neg' ? 'var(--danger)' : 'transparent';
+}
+
 function submitReview() {
     const n = document.getElementById('rev-name').value, t = document.getElementById('rev-text').value;
-    if(!n || !t) return alert("Толтуруңуз!");
-    db.ref('reviews').push({ name: n, text: t, date: new Date().toISOString() }).then(() => {
-        document.getElementById('rev-name').value = ""; 
-        document.getElementById('rev-text').value = "";
-        alert("Рахмат!");
+    if(!n || !t) return alert(translations[currentLang].alert_rev_err);
+    db.ref('reviews').push({ name: n, text: t, type: selectedRevType, date: new Date().toISOString() }).then(() => {
+        document.getElementById('rev-name').value = ""; document.getElementById('rev-text').value = "";
+        alert(translations[currentLang].alert_rev_ok);
     });
 }
 
@@ -96,10 +189,37 @@ function switchLang(l) {
     document.getElementById('txt-hello').innerText = t.hello;
     document.getElementById('lbl-send').innerText = t.send;
     document.getElementById('lbl-receive').innerText = t.receive;
-    document.getElementById('btn-main').innerText = t.main;
+    document.getElementById('btn-main').innerText = t.main_btn;
     document.getElementById('step-1').innerText = t.s1;
     document.getElementById('step-2').innerText = t.s2;
     document.getElementById('step-3').innerText = t.s3;
+    document.getElementById('txt-today-rate').innerText = t.today_rate;
+    document.getElementById('txt-r-1').innerText = t.r1;
+    document.getElementById('txt-r-2').innerText = t.r2;
+    document.getElementById('txt-r-3').innerText = t.r3;
+    document.getElementById('txt-cur-rate').innerText = t.cur_rate;
+    document.getElementById('btn-other-s').innerText = t.other;
+    document.getElementById('btn-other-y').innerText = t.other;
+    document.getElementById('btn-copy').innerText = t.copy;
+    document.getElementById('copy-toast').innerText = t.copied;
+    document.getElementById('guide-title').innerText = t.guide_t;
+    document.getElementById('g-step-1').innerText = t.g1;
+    document.getElementById('g-step-2').innerText = t.g2;
+    document.getElementById('g-step-3').innerText = t.g3;
+    document.getElementById('btn-back-1').innerText = t.back;
+    document.getElementById('btn-back-2').innerText = t.back;
+    document.getElementById('reviews-title').innerText = t.rev_t;
+    document.getElementById('add-rev-title').innerText = t.add_rev;
+    document.getElementById('rev-name').placeholder = t.name_ph;
+    document.getElementById('rev-text').placeholder = t.text_ph;
+    document.getElementById('type-pos').innerText = t.pos;
+    document.getElementById('type-neg').innerText = t.neg;
+    document.getElementById('btn-submit-rev').innerText = t.submit;
+    document.getElementById('m-home').innerText = t.m_home;
+    document.getElementById('m-guide').innerText = t.m_guide;
+    document.getElementById('m-reviews').innerText = t.m_rev;
+    document.getElementById('m-lesson').innerText = t.m_lesson;
+    document.getElementById('m-support').innerText = t.m_support;
     document.getElementById('btn-ky').classList.toggle('active', l==='ky');
     document.getElementById('btn-ru').classList.toggle('active', l==='ru');
 }
@@ -117,7 +237,8 @@ function toggleMenu(o = null) {
     if(o === false) m.classList.remove('active'); else m.classList.toggle('active');
 }
 function copyNum() {
-    navigator.clipboard.writeText("0998792579").then(() => {
+    const num = settings.bank ? settings.bank.number : "0998792579";
+    navigator.clipboard.writeText(num).then(() => {
         const t = document.getElementById('copy-toast');
         t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000);
     });

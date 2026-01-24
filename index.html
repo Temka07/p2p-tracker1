@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Бүгүнкү юаньдын курсун билиңиз</title>
+    <title>Yuan Exchange | Тез жана ишенимдүү</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
@@ -22,12 +22,27 @@
 
     <div id="page-home" class="page active">
         <h1 id="txt-hello" onclick="adminTrigger()">Саламатсызбы!</h1>
-        <div class="promo-section" id="promo-display">Жүктөлүүдө...</div>
+        <div class="promo-section" id="promo-display">...</div>
+
+        <div class="glass-card" style="margin-top: -10px; border-left: 5px solid var(--primary);">
+            <div id="txt-today-rate" style="font-weight: 800; font-size: 14px; margin-bottom: 10px; color: var(--primary);">🇨🇳 Юаньдын бүгүнкү курсу:</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                    <span id="txt-r-1">100ю чейин</span> <strong id="p-rate-1">--</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                    <span id="txt-r-2">100ю — 3000ю чейин</span> <strong id="p-rate-2">--</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                    <span id="txt-r-3">3000ю жогору</span> <strong id="p-rate-3">--</strong>
+                </div>
+            </div>
+        </div>
 
         <div class="steps-container" onclick="showPage('page-guide')" style="cursor:pointer; border: 1px solid #E5E5EA;">
-            <div class="step-item"><span class="step-num">1</span> <span id="step-1">Сумма жазыныз</span></div>
-            <div class="step-item"><span class="step-num">2</span> <span id="step-2">Которосуз</span></div>
-            <div class="step-item"><span class="step-num">3</span> <span id="step-3">Чек жибересиз</span></div>
+            <div class="step-item"><span class="step-num">1</span> <span id="step-1">Жазыңыз</span></div>
+            <div class="step-item"><span class="step-num">2</span> <span id="step-2">Которуңуз</span></div>
+            <div class="step-item"><span class="step-num">3</span> <span id="step-3">Чек жөнөтүңүз</span></div>
         </div>
 
         <div class="glass-card">
@@ -63,13 +78,13 @@
             <button id="we-btn" onclick="setApp('WeChat')">WeChat</button>
         </div>
 
-        <div class="rate-info">Курс: <strong id="current-rate">0.00</strong></div>
+        <div class="rate-info"><span id="txt-cur-rate">Курс:</span> <strong id="current-rate">0.00</strong></div>
 
         <div class="bank-card-black" onclick="copyNum()">
             <div class="bank-content">
                 <div class="bank-logo-yellow">M</div>
                 <div class="bank-text">
-                    <span class="bank-name">MBANK</span>
+                    <span class="bank-name" id="bank-title">MBANK</span>
                     <strong id="bank-number">0998 792 579</strong>
                     <span class="bank-owner">...</span>
                 </div>
@@ -82,33 +97,42 @@
     </div>
 
     <div id="page-guide" class="page">
-        <h2>Кантип сатып алуу керек?</h2>
+        <h2 id="guide-title">Кантип сатып алуу керек?</h2>
         <div class="guide-content" style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-            <div class="guide-step" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;"><div class="num-b" style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">1</div><p>Керектүү сумманы жазыңыз. Курс автоматтык түрдө эсептелип чыгарып берет.</p></div>
-            <div class="guide-step" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;"><div class="num-b" style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">2</div><p>Эсептөөдөн кийин «MBank аркылуу которуу» баскычын басыңыз. MBank ачылып, «выставить» кнопкасын басасыз, номер автоматтык түрдө чыгат. Чыккан сумманы киргизип, которуңуз.</p></div>
-            <div class="guide-step" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;"><div class="num-b" style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">3</div><p>Которгондон кийин «Алмаштыруу» жана «Чек жөнөтүү» кнопкаларын басасыз. WhatsApp’та текст автоматтык түрдө толтурулат ошол текстти жөнөтөсүз. Андан кийин төлөмдүн QR-кодун жана чекти жибересиз. Чек жөнөтүлгөндөн кийин 10 мүнөт ичинде юань которулат.</p></div>
+            <div class="guide-step" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;"><div class="num-b" style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">1</div><p id="g-step-1">Сумма жазыныз...</p></div>
+            <div class="guide-step" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;"><div class="num-b" style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">2</div><p id="g-step-2">Которосуз...</p></div>
+            <div class="guide-step" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;"><div class="num-b" style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">3</div><p id="g-step-3">Чек жибересиз...</p></div>
         </div>
-        <button class="back-btn" onclick="showPage('page-home')" style="width: 100%; padding: 20px; margin-top: 20px; font-size: 18px; font-weight: 800; border-radius: 20px;">АРТКА КАЙТУУ</button>
+        <button class="back-btn" onclick="showPage('page-home')" id="btn-back-1" style="width: 100%; padding: 20px; margin-top: 20px; font-size: 18px; font-weight: 800; border-radius: 20px;">АРТКА КАЙТУУ</button>
     </div>
 
     <div id="page-reviews" class="page">
-        <h2>Кардарлардын ойлору</h2>
-        <div id="reviews-container"></div>
-        <div class="add-review">
+        <h2 id="reviews-title">Кардарлардын ойлору</h2>
+        <div id="reviews-container" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;"></div>
+        
+        <div class="add-review" style="background: white; padding: 15px; border-radius: 20px; border: 1.5px solid #E5E5EA;">
+            <h3 id="add-rev-title" style="font-size: 16px; margin-bottom: 10px;">Пикир калтыруу</h3>
             <input type="text" id="rev-name" placeholder="Атыңыз">
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <button id="type-pos" onclick="setRevType('pos')" style="flex:1; background: #F2F2F7; color: black; padding: 10px; border-radius: 12px; font-size: 13px; border: 2px solid transparent;">😻 Положительный</button>
+                <button id="type-neg" onclick="setRevType('neg')" style="flex:1; background: #F2F2F7; color: black; padding: 10px; border-radius: 12px; font-size: 13px; border: 2px solid transparent;">😾 Отрицательный</button>
+            </div>
+
             <textarea id="rev-text" placeholder="Пикириңиз..."></textarea>
-            <button onclick="submitReview()">Пикир калтыруу</button>
+            <button id="btn-submit-rev" onclick="submitReview()" style="background: var(--primary); color: white; width: 100%; padding: 15px; border-radius: 15px; font-weight: 800; border:none;">ЖӨНӨТҮҮ</button>
         </div>
-        <button class="back-btn" onclick="showPage('page-home')" style="width: 100%; padding: 20px; margin-top: 20px; font-size: 18px; font-weight: 800; border-radius: 20px;">АРТКА КАЙТУУ</button>
+        <button class="back-btn" onclick="showPage('page-home')" id="btn-back-2" style="width: 100%; padding: 20px; margin-top: 20px; font-size: 18px; font-weight: 800; border-radius: 20px;">АРТКА КАЙТУУ</button>
     </div>
 </div>
 
 <div id="side-menu" class="side-menu">
     <div class="menu-close" onclick="toggleMenu()">✕</div>
-    <a href="#" onclick="showPage('page-home')" class="menu-link">🏠 Башкы бет</a>
-    <a href="#" onclick="showPage('page-guide')" class="menu-link">❓ Инстуркции</a>
-    <a href="#" onclick="showPage('page-reviews')" class="menu-link">⭐ Отзывтар</a>
-    <a href="https://wa.me/996998792579" target="_blank" class="menu-link">📞 Колдоо кызматы</a>
+    <a href="#" onclick="showPage('page-home')" class="menu-link" id="m-home">🏠 Башкы бет</a>
+    <a href="#" onclick="showPage('page-guide')" class="menu-link" id="m-guide">❓ Инструкции</a>
+    <a href="#" onclick="showPage('page-reviews')" class="menu-link" id="m-reviews">⭐ Отзывтар</a>
+    <a href="https://t.me/alipei_0" target="_blank" class="menu-link" id="m-lesson" style="color: var(--ali); font-weight: 800;">📱 Алипей ачуу урок</a>
+    <a href="https://wa.me/996998792579" target="_blank" class="menu-link" id="m-support">📞 Колдоо кызматы</a>
 </div>
 
 <script src="script.js"></script>
